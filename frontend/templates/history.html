@@ -1,69 +1,43 @@
-{% extends 'base.html' %}
-
+{% extends 'layouts/app.html' %}
 {% block content %}
-
-<div class="card shadow">
-
-    <div class="card-header bg-success text-white">
-
-        📜 Riwayat Analisis
-
-    </div>
-
-    <div class="card-body">
-
-        <div class="row mb-3">
-
-            <div class="col-md-6">
-
-                <input type="text" id="searchHistory" class="form-control" placeholder="Cari data...">
-
-            </div>
-
-            <div class="col-md-6 text-end">
-
-                <button class="btn btn-success" onclick="downloadCSV()">
-
-                    Download CSV
-
-                </button>
-
-            </div>
-
-        </div>
-
-        <table class="table table-striped">
-
-            <thead>
-
-                <tr>
-
-                    <th>ID</th>
-
-                    <th>Tanggal</th>
-
-                    <th>Pemasukan</th>
-
-                    <th>Pengeluaran</th>
-
-                    <th>Saldo</th>
-
-                    <th>Target</th>
-
-                    <th>Aksi</th>
-
-                </tr>
-
-            </thead>
-
-            <tbody id="historyTable">
-
-            </tbody>
-
-        </table>
-
-    </div>
-
+<nav class="breadcrumb-custom">
+    Dashboard
+    <span>/</span>
+    Riwayat
+</nav>
+<div class="page-header">
+    <h2>Riwayat Analisis</h2>
+    <p>Daftar hasil analisis keuangan yang tersimpan.</p>
 </div>
-
+<div class="custom-card">
+    <div class="d-flex flex-column flex-md-row gap-2 justify-content-between align-items-md-center mb-3">
+        <input id="searchHistory" type="text" class="form-control"
+            style="max-width:320px"
+            placeholder="Cari berdasarkan tanggal atau ID...">
+        <button class="btn btn-success" onclick="downloadCSV()">
+            <i class="bi bi-download"></i>
+            Unduh CSV
+        </button>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Tanggal</th>
+                    <th>Pemasukan</th>
+                    <th>Pengeluaran</th>
+                    <th>Saldo</th>
+                    <th>Target</th>
+                    <th>Aksi</th>
+                </tr>
+            </thead>
+            <tbody id="historyTable"></tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static',filename='js/app.js') }}"></script>
+<script src="{{ url_for('static',filename='js/history.js') }}"></script>
 {% endblock %}

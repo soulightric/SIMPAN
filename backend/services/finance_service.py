@@ -1,5 +1,4 @@
 def calculate_finance(data):
-
     total_pengeluaran = (
         data["makanan"]
         + data["transportasi"]
@@ -7,9 +6,7 @@ def calculate_finance(data):
         + data["hiburan"]
         + data["lainnya"]
     )
-
     saldo = data["pemasukan"] - total_pengeluaran
-
     return {
         **data,
         "total_pengeluaran": total_pengeluaran,

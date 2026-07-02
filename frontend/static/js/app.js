@@ -1,63 +1,42 @@
 const form = document.getElementById("financeForm");
 
-form.addEventListener("submit", async function(e){
+if (form) {
+    form.addEventListener("submit", async function (e) {
+        e.preventDefault();
 
-    e.preventDefault();
+        const data = {
+            pemasukan: Number(document.getElementById("pemasukan").value) || 0,
+            makanan: Number(document.getElementById("makanan").value) || 0,
+            transportasi: Number(document.getElementById("transportasi").value) || 0,
+            pendidikan: Number(document.getElementById("pendidikan").value) || 0,
+            hiburan: Number(document.getElementById("hiburan").value) || 0,
+            lainnya: Number(document.getElementById("lainnya").value) || 0,
+            target: Number(document.getElementById("target").value) || 0,
+            deadline: Number(document.getElementById("deadline").value) || 0
+        };
 
-    const data = {
-
-        pemasukan:Number(document.getElementById("pemasukan").value),
-
-        makanan:Number(document.getElementById("makanan").value),
-
-        transportasi:Number(document.getElementById("transportasi").value),
-
-        pendidikan:Number(document.getElementById("pendidikan").value),
-
-        hiburan:Number(document.getElementById("hiburan").value),
-
-        lainnya:Number(document.getElementById("lainnya").value),
-
-        target:Number(document.getElementById("target").value),
-
-        deadline:Number(document.getElementById("deadline").value)
-
-    };
-
-    try{
-        document.getElementById("loadingSpinner").classList.remove("d-none");
-
-        const result = await API.analyze(data);
-
-        updateDashboard(result);
-
-    }
-
-    catch(err){
-
-        alert(err.message);
-
-    }
-
-});
-
-function rupiah(value){
-
-    return new Intl.NumberFormat("id-ID",{
-
-        style:"currency",
-
-        currency:"IDR",
-
-        maximumFractionDigits:0
-
-    }).format(value);
-
+        try {
+            showLoading();
+            const result = await API.analyze(data);
+            updateDashboard(result);
+            showToast("Analisis berhasil.");
+        } catch (err) {
+            showToast("Gagal melakukan analisis. Coba lagi.");
+        } finally {
+            hideLoading();
+        }
+    });
 }
 
-function updateDashboard(result){
+function rupiah(value) {
+    return new Intl.NumberFormat("id-ID", {
+        style: "currency",
+        currency: "IDR",
+        maximumFractionDigits: 0
+    }).format(value || 0);
+}
 
-    document.getElementById("loadingSpinner").classList.add("d-none");
+function updateDashboard(result) {
 
     document.getElementById("incomeValue").innerHTML =
         rupiah(result.finance.pemasukan);
@@ -68,6 +47,11 @@ function updateDashboard(result){
     document.getElementById("balanceValue").innerHTML =
         rupiah(result.finance.saldo);
 
+    const targetValue = document.getElementById("targetValue");
+    if (targetValue) {
+        targetValue.innerHTML = rupiah(result.finance.target);
+    }
+
     renderRules(result.rules);
 
     renderRecommendation(result.recommendation);
@@ -76,139 +60,105 @@ function updateDashboard(result){
 
     drawBarChart(result.finance);
 
-    updateProgress(
-
-        result.finance,
-
-        result.planning
-
-    );
+    updateProgress(result.finance, result.planning);
 
     updateFinancialStatus(result.finance);
 
     updatePlanning(result.planning);
 
+    updateHealthScore(result.finance, result.planning);
 }
 
-function renderRules(rules){
+function updateHealthScore(finance, plan) {
+
+    const scoreEl = document.getElementById("healthScore");
+    const statusEl = document.getElementById("healthStatus");
+    if (!scoreEl || !statusEl) return;
+
+    let score = 100;
+    const income = finance.pemasukan || 0;
+
+    if (finance.total_pengeluaran > income) score -= 40;      // defisit
+    if (income && finance.saldo < income * 0.10) score -= 20;  // saldo tipis
+    if (income && finance.hiburan > income * 0.20) score -= 10; // hiburan boros
+    if (plan && !plan.cukup) score -= 15;                       // target belum aman
+
+    score = Math.max(0, Math.min(100, score));
+    scoreEl.innerHTML = score;
+
+    let label, cls;
+    if (score >= 80) { label = "Sangat Baik"; cls = "hs-good"; }
+    else if (score >= 60) { label = "Baik"; cls = "hs-ok"; }
+    else if (score >= 40) { label = "Waspada"; cls = "hs-warn"; }
+    else { label = "Kritis"; cls = "hs-bad"; }
+
+    statusEl.innerHTML = label;
+    statusEl.className = "health-status " + cls;
+}
+
+function renderRules(rules) {
 
     const list = document.getElementById("ruleList");
+    list.innerHTML = "";
 
-    list.innerHTML="";
-
-    if(rules.length===0){
-
-        list.innerHTML="<li>Tidak ada peringatan.</li>";
-
+    if (!rules || rules.length === 0) {
+        list.innerHTML = "<li>Tidak ada peringatan.</li>";
         return;
-
     }
 
-    rules.forEach(rule=>{
-
-        list.innerHTML +=
-
-        `<li>${rule.message}</li>`;
-
+    rules.forEach(rule => {
+        list.innerHTML += `<li>${rule.message}</li>`;
     });
-
 }
 
-function renderRecommendation(data){
+function renderRecommendation(data) {
 
     const list = document.getElementById("recommendationList");
+    list.innerHTML = "";
 
-    list.innerHTML="";
-
-    data.forEach(item=>{
-
-        list.innerHTML +=
-
-        `<li>${item}</li>`;
-
+    (data || []).forEach(item => {
+        list.innerHTML += `<li>${item}</li>`;
     });
-
 }
 
-function updateFinancialStatus(finance){
+function updateFinancialStatus(finance) {
 
-    const ratio =
+    const status = document.getElementById("financialStatus");
+    const message = document.getElementById("financialMessage");
 
-        finance.total_pengeluaran /
-
-        finance.pemasukan;
-
-    const status =
-
-        document.getElementById("financialStatus");
-
-    const message =
-
-        document.getElementById("financialMessage");
-
-    if(ratio<=0.7){
-
-        status.innerHTML="🟢 Baik";
-
-        status.className="text-success";
-
-        message.innerHTML=
-
-        "Keuangan Anda sehat.";
-
+    if (!status || !message) {
+        return;
     }
 
-    else if(ratio<=0.9){
+    const ratio = finance.pemasukan
+        ? finance.total_pengeluaran / finance.pemasukan
+        : 1;
 
-        status.innerHTML="🟡 Waspada";
-
-        status.className="text-warning";
-
-        message.innerHTML=
-
-        "Pengeluaran mulai tinggi.";
-
+    if (ratio <= 0.7) {
+        status.innerHTML = `<span class="badge bg-success">Baik</span>`;
+        message.innerHTML = "Keuangan Anda sehat.";
+    } else if (ratio <= 0.9) {
+        status.innerHTML = `<span class="badge bg-warning">Waspada</span>`;
+        message.innerHTML = "Pengeluaran mulai tinggi.";
+    } else {
+        status.innerHTML = `<span class="badge bg-danger">Defisit</span>`;
+        message.innerHTML = "Segera kurangi pengeluaran.";
     }
-
-    else{
-
-        status.innerHTML="🔴 Defisit";
-
-        status.className="text-danger";
-
-        message.innerHTML=
-
-        "Segera kurangi pengeluaran.";
-
-    }
-
 }
 
-function updatePlanning(plan){
+function updatePlanning(plan) {
 
-    document
-    .getElementById("monthlyTarget")
-    .innerHTML=
+    const monthlyTarget = document.getElementById("monthlyTarget");
+    const planningGap = document.getElementById("planningGap");
+    const planningStatus = document.getElementById("planningStatus");
 
-    rupiah(plan.target_per_bulan);
-
-    document
-    .getElementById("planningGap")
-    .innerHTML=
-
-    rupiah(plan.kekurangan);
-
-    document
-    .getElementById("planningStatus")
-    .innerHTML=
-
-    plan.cukup
-
-    ?
-
-    "✅ Tercapai"
-
-    :
-
-    "⚠ Belum";
+    if (monthlyTarget) {
+        monthlyTarget.innerHTML = rupiah(plan.target_per_bulan);
+    }
+    if (planningGap) {
+        planningGap.innerHTML = rupiah(plan.kekurangan);
+    }
+    if (planningStatus) {
+        planningStatus.innerHTML = plan.cukup ? "✅ Tercapai" : "⚠ Belum";
+    }
 }

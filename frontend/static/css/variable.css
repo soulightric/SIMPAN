@@ -1,0 +1,48 @@
+:root {
+
+    /* PRIMARY */
+
+    --primary: #198754;
+    --primary-dark: #157347;
+    --success: #198754;
+    --danger: #dc3545;
+    --warning: #ffc107;
+    --info: #0dcaf0;
+
+    /* BACKGROUND */
+
+    --bg: #f5f7fb;
+    --card: #ffffff;
+    --sidebar: #198754;
+    --navbar: #ffffff;
+
+    /* TEXT */
+
+    --text: #212529;
+    --text-muted: #6c757d;
+
+    /* BORDER */
+
+    --border: #e9ecef;
+
+    /* SHADOW */
+
+    --shadow-sm: 0 2px 8px rgba(0, 0, 0, .05);
+
+    --shadow-md: 0 5px 18px rgba(0, 0, 0, .08);
+
+    --shadow-lg: 0 12px 30px rgba(0, 0, 0, .12);
+
+    /* RADIUS */
+
+    --radius-sm: 10px;
+
+    --radius-md: 16px;
+
+    --radius-lg: 24px;
+
+    /* TRANSITION */
+
+    --transition: .3s ease;
+
+}

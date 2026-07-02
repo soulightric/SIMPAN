@@ -43,6 +43,24 @@ function drawPieChart(finance){
 
             }]
 
+        },
+
+        options:{
+
+            responsive:true,
+
+            maintainAspectRatio:false,
+
+            plugins:{
+
+                legend:{
+
+                    position:"bottom"
+
+                }
+
+            }
+
         }
 
     });
@@ -93,6 +111,8 @@ function drawBarChart(finance){
         options:{
 
             responsive:true,
+
+            maintainAspectRatio:false,
 
             scales:{
 

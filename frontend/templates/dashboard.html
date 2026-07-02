@@ -1,0 +1,172 @@
+{% extends 'layouts/app.html' %}
+{% block content %}
+<nav class="breadcrumb-custom">
+    Dashboard
+    <span>/</span>
+    Home
+</nav>
+<div class="page-header">
+    <h2>Dashboard</h2>
+    <p>Smart Budget Planner menggunakan Knowledge-Based AI</p>
+</div>
+<!-- Welcome  -->
+<div class="welcome-card">
+    <div>
+        <h3 id="greeting">
+            Selamat Datang 👋
+        </h3>
+        <p>
+            Kelola keuangan Anda dengan bantuan Knowledge-Based AI.
+        </p>
+    </div>
+    <div class="welcome-date">
+        <h5 id="currentDate"></h5>
+        <small id="currentTime"></small>
+    </div>
+    <div class="health-card">
+        <div>
+            <h5>Financial Health</h5>
+            <h2 id="healthScore">--</h2>
+        </div>
+        <div id="healthStatus" class="health-status">
+            Belum ada
+        </div>
+    </div>
+</div>
+<!-- SUMMARY -->
+<div class="summary-grid">
+    <div class="summary-card income">
+        <div>
+            <h6>Pemasukan</h6>
+            <h3 id="incomeValue">Rp0</h3>
+            <div class="skeleton" style="height:25px;width:120px">
+            </div>
+        </div>
+        <i class="bi bi-wallet2"></i>
+    </div>
+    <div class="summary-card expense">
+        <div>
+            <h6>Pengeluaran</h6>
+            <h3 id="expenseValue">Rp0</h3>
+        </div>
+        <i class="bi bi-credit-card"></i>
+    </div>
+    <div class="summary-card balance">
+        <div>
+            <h6>Saldo</h6>
+            <h3 id="balanceValue">Rp0</h3>
+        </div>
+        <i class="bi bi-cash-stack"></i>
+    </div>
+    <div class="summary-card target">
+        <div>
+            <h6>Target</h6>
+            <h3 id="targetValue">Rp0</h3>
+        </div>
+        <i class="bi bi-bullseye"></i>
+    </div>
+</div>
+<div class="dashboard-grid">
+    <section class="left-column">
+        <div class="custom-card">
+            <div class="card-title">
+                <i class="bi bi-pencil-square"></i>
+                Input Keuangan
+            </div>
+            <form id="financeForm">
+                <input id="pemasukan" type="number" class="form-control mb-3" placeholder="Pemasukan">
+                <input id="makanan" type="number" class="form-control mb-3" placeholder="Makanan">
+                <input id="transportasi" type="number" class="form-control mb-3" placeholder="Transportasi">
+                <input id="pendidikan" type="number" class="form-control mb-3" placeholder="Pendidikan">
+                <input id="hiburan" type="number" class="form-control mb-3" placeholder="Hiburan">
+                <input id="lainnya" type="number" class="form-control mb-3" placeholder="Lainnya">
+                <input id="target" type="number" class="form-control mb-3" placeholder="Target Tabungan">
+                <input id="deadline" type="number" class="form-control mb-3" placeholder="Deadline (bulan)">
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-success flex-grow-1">
+                        <i class="bi bi-cpu"></i> Analisis
+                    </button>
+                    <button type="reset" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-counterclockwise"></i> Reset
+                    </button>
+                </div>
+            </form>
+        </div>
+    </section>
+    <section class="right-column">
+        <div class="chart-grid">
+            <div class="custom-card">
+                <div class="card-title">
+                    🥧 Distribusi Pengeluaran
+
+                </div>
+                <div class="chart-box">
+                    <canvas id="pieChart"></canvas>
+                </div>
+            </div>
+            <div class="custom-card">
+                <div class="card-title">
+                    📊 Income vs Expense
+                </div>
+                <div class="chart-box">
+                    <canvas id="barChart"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="info-grid">
+            <div class="custom-card">
+                <div class="card-title">
+                    🤖 AI Analysis
+                </div>
+                <ul id="ruleList"></ul>
+            </div>
+            <div class="custom-card">
+                <div class="card-title">
+                    🎯 Planning
+                </div>
+                <div id="planningBox">
+                    <p class="mb-2">
+                        Target per bulan:
+                        <strong id="monthlyTarget">Rp0</strong>
+                    </p>
+                    <p class="mb-2">
+                        Kekurangan:
+                        <strong id="planningGap">Rp0</strong>
+                    </p>
+                    <p class="mb-2">
+                        Status: <span id="planningStatus">Belum ada data</span>
+                    </p>
+                    <div class="progress mt-3" style="height:22px">
+                        <div id="targetProgress"
+                            class="progress-bar bg-success"
+                            role="progressbar"
+                            style="width:0%">0%</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="custom-card mt-4">
+            <div class="card-title">
+                📊 Status Keuangan
+            </div>
+            <h4 id="financialStatus">
+                <span class="badge bg-secondary">Belum ada data</span>
+            </h4>
+            <p id="financialMessage" class="mb-0">
+                Masukkan data keuangan lalu klik Analisis.
+            </p>
+        </div>
+        <div class="custom-card mt-4">
+            <div class="card-title">
+                💡 Recommendation
+            </div>
+            <ul id="recommendationList"></ul>
+        </div>
+    </section>
+</div>
+{% endblock %}
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="{{ url_for('static',filename='js/chart.js') }}"></script>
+<script src="{{ url_for('static',filename='js/app.js') }}"></script>
+{% endblock %}
