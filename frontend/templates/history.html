@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="card shadow">
+
+    <div class="card-header bg-success text-white">
+
+        📜 Riwayat Analisis
+
+    </div>
+
+    <div class="card-body">
+
+        <div class="row mb-3">
+
+            <div class="col-md-6">
+
+                <input type="text" id="searchHistory" class="form-control" placeholder="Cari data...">
+
+            </div>
+
+            <div class="col-md-6 text-end">
+
+                <button class="btn btn-success" onclick="downloadCSV()">
+
+                    Download CSV
+
+                </button>
+
+            </div>
+
+        </div>
+
+        <table class="table table-striped">
+
+            <thead>
+
+                <tr>
+
+                    <th>ID</th>
+
+                    <th>Tanggal</th>
+
+                    <th>Pemasukan</th>
+
+                    <th>Pengeluaran</th>
+
+                    <th>Saldo</th>
+
+                    <th>Target</th>
+
+                    <th>Aksi</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody id="historyTable">
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+{% endblock %}

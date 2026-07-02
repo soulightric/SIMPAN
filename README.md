@@ -6,33 +6,32 @@ SIMPAN/
 │
 ├── app.py
 ├── requirements.txt
+├── .gitignore
+├── README.md
 │
-├── data/
-│   └── transaksi.csv
-│
-├── modules/
+├── backend/
 │   ├── __init__.py
-│   ├── input_data.py
-│   ├── rule_engine.py
-│   ├── planning.py
-│   ├── recommendation.py
-│   └── database.py
+│   ├── config.py
+│   ├── routes.py
+│   │
+│   ├── services/
+│   │
+│   ├── knowledge/
+│   │
+│   └── database/
 │
-├── utils/
-│   ├── __init__.py
-│   └── helper.py
+├── frontend/
+│   ├── templates/
+│   │     ├── base.html
+│   │     └── index.html
+│   │
+│   └── static/
+│         ├── css/
+│         │      └── style.css
+│         │
+│         ├── js/
+│         │      └── app.js
+│         │
+│         └── img/
 │
-└── assets/
-    └── logo.png
-
-Tahap 1
-
-pip install streamlit pandas
-
-pip install numpy
-
-bisa di install 
-
-pip install -r requirements.txt
-
-pip install matplotlib
+└── tests/
